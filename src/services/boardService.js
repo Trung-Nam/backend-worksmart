@@ -14,12 +14,9 @@ const createNew = async (reqBody) => {
 
         // Gọi tới tầng Model để xử lý bản ghi newBoard vào trong Database
         const createBoard = await boardModel.createNew(newBoard);
-        console.log(createBoard);
 
         // Lấy bản ghi board sau khi gọi (tùy vào mục đích dự án có cần bước này hay không)
         const getNewBoard = await boardModel.findOneById(createBoard.insertedId);
-        console.log(getNewBoard);
-
 
         // Làm thêm các xử lý logic khác với các Collection khác tùy đặc thù dự án...vvv
         // Bắn email, notifications về cho admin khi có 1 cái board mới được tạo...vvv

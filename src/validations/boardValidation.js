@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 const createNew = async (req, res, next) => {
     /**
-    * Note: Mặc định chúng ta không cần phải custom message ở phía BE làm gì 
+    * Note: Mặc định chúng ta không cần phải custom message ở phía BE làm gì
     *Vì để cho Front-end tự validate và custom message phía FE cho đẹp.
     *Back-end chỉ cần validate Đảm Bảo Dữ Liệu Chuẩn Xác, và trả về message mặc định từ thư viện là được.
     *Quan trọng: Việc Validate dữ liệu BẮT BUỘC phải có ở phía Back-end vì đây là điểm cuối để lưu trữ dữ liệu vào Database.
@@ -22,13 +22,11 @@ const createNew = async (req, res, next) => {
     })
 
     try {
-        console.log('req.body: ', req.body);
         //Chỉ định  abortEarly: false để trường hợp có nhiều lỗi trả về tất cả lỗi
         await correctCondition.validateAsync(req.body, { abortEarly: false });
-        // next();
-        res.status(StatusCodes.CREATED).json({ message: 'POST from validation:API create new board' });
+        // Validate dữ liệu xong xuôi hợp lệ thì cho request đi tiếp sang controller
+        next();
     } catch (error) {
-        console.log(error);
         res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: new Error(error).message });
     }
 }

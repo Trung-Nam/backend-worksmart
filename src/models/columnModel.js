@@ -18,6 +18,8 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
+// Chỉ định ra những fields mà chúng ta không muốn cho phép cập nhật hàm update()
+const INVALID_UPDATE_FIELDS = ['_id', 'boardId', 'createdAt']
 
 const validateBeforeCreate = async (data) => {
   return await COLUMN_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false });
@@ -50,22 +52,48 @@ const findOneById = async (id) => {
 
 const pushCardOrderIds = async (card) => {
   try {
-      const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
-          {
-              _id: new ObjectId(card.columnId)
-          },
-          {
-              $push: {
-                  cardOrderIds: new ObjectId(card._id)
-              }
-          },
-          {
-              returnDocument: 'after'
-          }
-      )
-      return result;
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      {
+        _id: new ObjectId(card.columnId)
+      },
+      {
+        $push: {
+          cardOrderIds: new ObjectId(card._id)
+        }
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+    return result;
   } catch (error) {
-      throw new Error(error);
+    throw new Error(error);
+  }
+}
+
+const update = async (columnId, updateData) => {
+  try {
+    // Lọc fields không cho phép update
+    Object.keys(updateData).forEach(fieldName => {
+      if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+        delete updateData[fieldName];
+      }
+    })
+
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      {
+        _id: new ObjectId(columnId)
+      },
+      {
+        $set: updateData
+      },
+      {
+        returnDocument: 'after' // trả về kết quả mới sau khi cập nhật
+      }
+    )
+    return result;
+  } catch (error) {
+    throw new Error(error);
   }
 }
 
@@ -74,5 +102,6 @@ export const columnModel = {
   COLUMN_COLLECTION_SCHEMA,
   createNew,
   findOneById,
-  pushCardOrderIds
+  pushCardOrderIds,
+  update
 }

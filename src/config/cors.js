@@ -7,7 +7,7 @@ import ApiError from '~/utils/ApiError'
 export const corsOptions = {
   origin: function (origin, callback) {
     // Cho phép việc gọi API môi trường dev
-    if (env.BUILD_MODE === 'dev') {
+    if (env.BUILD_MODE === 'development') {
       return callback(null, true)
     }
 

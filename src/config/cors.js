@@ -7,12 +7,12 @@ import ApiError from '~/utils/ApiError'
 export const corsOptions = {
   origin: function (origin, callback) {
     // Cho phép việc gọi API môi trường dev
-    if (env.BUILD_MODE === 'development') {
+    if (env.MODE === 'development') {
       return callback(null, true)
     }
 
     // Ngược lại hiện tại còn 1TH là production
-    // env.BUILD_MODE === 'production'
+    // env.MODE === 'production'
 
     // Kiểm tra dem origin có phải là domain được chấp nhận hay không
     if (WHITELIST_DOMAINS.includes(origin)) {

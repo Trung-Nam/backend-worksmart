@@ -22,7 +22,7 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware);
 
-  if (env.BUILD_MODE === 'production') {
+  if (env.MODE === 'production') {
     // Môi trường production
     app.listen(env.LOCAL_DEV_APP_PORT, () => {
       console.log(`3. Production: Hello ${env.AUTHOR}, Backend running at ${env.LOCAL_DEV_APP_PORT}`)
